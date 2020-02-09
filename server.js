@@ -64,6 +64,7 @@ function startEmployeePrompt(){
     })
 };
 
+// add new department
 function addDepartment(){
     inquirer.prompt({
         name: "newDepartment",
@@ -78,6 +79,7 @@ function addDepartment(){
     });
 }
 
+// add new role
 function addRole(){
     inquirer.prompt([{
         name: "newRole",
@@ -86,11 +88,13 @@ function addRole(){
     }, {
         name: "salary",
         type: "input", 
-        message: "What is their salary?"
+        message: "What is their salary?",
+        validate: validateSalary
     }, {
         name: "departmentID",
         type: "input",
-        message: "What is their department id?"
+        message: "What is their department id?",
+        validate: validateID
     }]).then(function(answer){
         connection.query("INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)", [answer.newRole, answer.salary, answer.departmentID], function(err){
             if(err) throw err;
@@ -100,7 +104,7 @@ function addRole(){
     });
 }
 
-//first_name, last_name, role_id, manager_id
+// add new employee
 function addEmployee(){
     inquirer.prompt([{
         name: "firstName",
@@ -113,11 +117,13 @@ function addEmployee(){
     }, {
         name: "roleID",
         type: "input",
-        message: "What is their role id?"
+        message: "What is their role id?",
+        validate: validateID
     }, {
         name: "managerID",
         type: "input",
-        message: "What is their manager's id?"
+        message: "What is their manager's id?",
+        validate: validateID
     }]).then(function(answer){
         connection.query("INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES (?, ?, ?, ?)", [answer.firstName, answer.lastName, answer.roleID, answer.managerID], function(err){
             if(err) throw err;
@@ -127,20 +133,51 @@ function addEmployee(){
     });
 }
 
+// view all departments
 function viewDepartments(){
-
+    connection.query("SELECT * FROM department", function (err, res){
+        if(err) throw err;
+        console.table(res);
+        startEmployeePrompt();
+    });
 }
 
+// view all roles
 function viewRoles(){
-
+    connection.query("SELECT * FROM role", function (err, res){
+        if(err) throw err;
+        console.table(res);
+        startEmployeePrompt();
+    });
 }
 
+// view all employees
 function viewEmployees(){
-
+    connection.query("SELECT * FROM employee", function (err, res){
+        if(err) throw err;
+        console.table(res);
+        startEmployeePrompt();
+    });
 }
 
+// update employee role
 function updateEmployeeRole(){
 
 }
 
+// ensures salary is a number
+function validateSalary(salary){
+    if(isNaN(salary)){
+        return "Please enter a valid number for salary";
+    }
+    return true;
+};
+
+// ensures id is a number
+function validateID(id){
+    if(isNaN(id)){
+        return "Please enter a valid number for id";
+    }
+    return true;
+};
 
