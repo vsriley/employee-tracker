@@ -162,7 +162,22 @@ function viewEmployees(){
 
 // update employee role
 function updateEmployeeRole(){
-
+    inquirer.prompt([{
+        name: "lastName",
+        type: "input",
+        message: "What is the last name of the employee whose role you would like to change?"
+    }, {
+        name: "newRole",
+        type: "input", 
+        message: "What is their new role id?",
+        validate: validateID
+    }]).then(function(answer){
+        connection.query("UPDATE employee SET ? WHERE ?" , [{role_id: answer.newRole}, {last_name: answer.lastName}], function(err){
+            if(err) throw err;
+            console.log(`Updated role - ${answer.newRole} successfully!`);
+            startEmployeePrompt();
+        })
+    });
 }
 
 // ensures salary is a number
